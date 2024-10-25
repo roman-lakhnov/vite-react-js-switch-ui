@@ -3,24 +3,26 @@ const Indicators = ({ gateStatus, title }) => {
 		<div className='d-flex align-items-center me-3'>
 			<div
 				style={{
-					marginRight:10,
+					marginRight: 10,
 					width: 20,
 					height: 20,
 					borderRadius: '50%',
 					backgroundColor: state ? 'green' : 'red'
 				}}
-				></div>
-				<span>{label}</span>
+			></div>
+			<span><strong>{label}</strong></span>
 		</div>
 	)
 	return (
-		<div className="col-md-2 col-sm-6">
-			<h2 className='mb-4 mt-4'>{title}</h2>
-			{gateStatus.map((state, index) => (
-				<div key={index} className='d-flex align-items-center mb-3'>
-					<Indicator state={state} label={`gate ${index + 1}`} />
-				</div>
-			))}
+		<div className='mt-4 col-md-6 col-sm-12  '>
+			<div className="d-flex justify-content-between border rounded bg-light ">
+				<h2 className='m-2 align-content-center'>{title}</h2>
+				{gateStatus.map((state, index) => (
+					<div key={index} className='align-content-center'>
+						<Indicator state={state} label={`gate ${index + 1}`} />
+					</div>
+				))}
+			</div>
 		</div>
 	)
 }

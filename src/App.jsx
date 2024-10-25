@@ -4,6 +4,7 @@ import SettingsForm from './components/SettingsForm'
 import Indicators from './components/Indicators'
 import SwitchControl from './components/SwitchControl'
 import fetchData from './utils/fetchData'
+import Header from './components/Header'
 
 function App() {
 	const [ramStatus, setRamStatus] = useState(null)
@@ -22,14 +23,15 @@ function App() {
 		fetchData('/api/mqtt/settings', setMqttSettings)
 		fetchData('/api/device/status', setDeviceStatus)
 	}, [])
+
 	return (
-		<div className='container mt-5'>
+		<div className='container mt-3 mb-3'>
 			<div className='row'>
+				<Header />
 				<SettingsForm
 					mqttSettings={mqttSettings}
 					setMqttSettings={setMqttSettings}
 				/>
-
 				<DeviceData
 					ramStatus={ramStatus}
 					deviceStatus={deviceStatus}

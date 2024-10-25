@@ -9,7 +9,7 @@ const SwitchControl = ({ ioStatus, setIoStatus }) => {
 				checked={isActive == 1}
 				onChange={e => toggleRelay(relayId, e.target.checked ? 1 : 0)}
 			/>
-			<label className='form-check-label'>switch {relayId}</label>
+			<label className='form-check-label'><strong>switch {relayId}</strong></label>
 		</div>
 	)
 	const toggleRelay = async (relayId, newState) => {
@@ -30,13 +30,15 @@ const SwitchControl = ({ ioStatus, setIoStatus }) => {
 		}
 	}
 	return (
-		<div className='col-md-2 col-sm-6'>
-			<h2 className='mb-4 mt-4'>Реле</h2>
-			{ioStatus.outputs.map((state, index) => (
-				<div key={index} className='d-flex align-items-center mb-3'>
-					<Switch relayId={index + 1} isActive={state} />
-				</div>
-			))}
+		<div className='mt-4 col-md-6 col-sm-12'>
+			<div className='d-flex justify-content-between border rounded bg-light'>
+				<h2 className='m-2 align-content-center'>Реле</h2>
+				{ioStatus.outputs.map((state, index) => (
+					<div key={index} className='align-content-center'>
+						<Switch relayId={index + 1} isActive={state} />
+					</div>
+				))}
+			</div>
 		</div>
 	)
 }

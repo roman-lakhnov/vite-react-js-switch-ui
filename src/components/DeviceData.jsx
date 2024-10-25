@@ -1,19 +1,19 @@
 const DeviceData = ({
 	ramStatus,
-	deviceStatus,
+	deviceStatus
 	// ioStatus, mqttSettings
 }) => {
 	const Card = ({ title, data }) => {
 		return (
-			<div className='col-md-6 mb-4'>
-				<div className='card'>
+			<div className='col-md-6 '>
+				<div className='card h-100 '>
 					<div className='card-header'>
 						<h5 className='card-title'>{title}</h5>
 					</div>
 					<div className='card-body'>
-						<ul className='list-group'>
+						<ul className='list-group h-100'>
 							{Object.entries(data).map(([key, value]) => (
-								<li key={key} className='list-group-item'>
+								<li key={key} className='list-group-item h-100'>
 									<strong>{key}:</strong>{' '}
 									{Array.isArray(value) ? value.join(', ') : value}
 								</li>
@@ -25,15 +25,15 @@ const DeviceData = ({
 		)
 	}
 	return (
-		<div className="col-md-8">
+		<div className='col-md-8 mt-4 d-flex flex-column'>
 			<h2 className='mb-4'>Данные устройства</h2>
-			<div className='row'>
+			<div className='row h-100'>
 				{ramStatus && <Card title='RAM Status' data={ramStatus} />}
 				{deviceStatus && <Card title='Device Status' data={deviceStatus} />}
 				{/* {ioStatus && <Card title='IO Status' data={ioStatus} />}
-				{mqttSettings && (
-					<Card title='Current MQTT Settings' data={mqttSettings} />
-				)} */}
+		{mqttSettings && (
+			<Card title='Current MQTT Settings' data={mqttSettings} />
+			)} */}
 			</div>
 		</div>
 	)
