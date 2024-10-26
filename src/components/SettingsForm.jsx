@@ -9,7 +9,7 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 		broker: '',
 		username: '',
 		password: '',
-		enabled: '0'
+		enabled: false
 	})
 	useEffect(() => {
 		setFormData(prevData => ({
@@ -61,17 +61,9 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 	}
 	async function handleRestart() {
 		try {
-			// TODO убрать все ниже
-			const filteredData = filterEmptyFields(formData)
-			console.log(JSON.stringify(filteredData))
-			// TODO убрать выше
-			const response = await fetch(constants.serverIp + '/api/mqtt/settings', {
-				// TODO когда будет ендпоинт для перезагрузки  переделать
-				///api/device/restart
+			const response = await fetch(constants.serverIp + '/api/device/restart', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(filteredData)
-				// TODO будет отправка пустого бади
+				headers: { 'Content-Type': 'application/json' }
 			})
 			if (!response.ok) {
 				throw new Error(`Ошибка: ${response.status} ${response.statusText}`)
@@ -123,7 +115,7 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 										type='checkbox'
 										className='form-check-input'
 										name='enabled'
-										checked={formData.enabled == 1 ? 1 : 0}
+										checked={formData.enabled==true?true:false}
 										onChange={handleInputChange}
 									/>
 									<label className='form-check-label'>

@@ -19,7 +19,7 @@ const Indicators = ({ gateStatus, title }) => {
 				<h2 className='m-2 align-content-center'>{title}</h2>
 				{gateStatus.map((state, index) => (
 					<div key={index} className='align-content-center'>
-						<Indicator state={state} label={`gate ${index + 1}`} />
+						<Indicator state={state} label={`input ${index + 1}`} />
 					</div>
 				))}
 			</div>

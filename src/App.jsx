@@ -14,7 +14,7 @@ function App() {
 		broker: 'n/d',
 		username: 'n/d',
 		password: 'n/d',
-		enabled: '0'
+		enabled: false
 	})
 
 	useEffect(() => {
