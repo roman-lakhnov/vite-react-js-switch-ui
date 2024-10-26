@@ -9,52 +9,87 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 		broker: '',
 		username: '',
 		password: '',
-		enabled: false
+		enabled: false,
+		protocol: 'mqtt',
+		ip_domain: '',
+		port: ''
 	})
 	useEffect(() => {
-		setFormData(prevData => ({
-			...prevData,
-			enabled: mqttSettings.enabled
-			// broker:mqttSettings.broker,
-			// username:mqttSettings.username
-		}))
+		const brokerRegex = /^(mqtt|mqtts):\/\/([\d.]+|\S+):(\d+)$/
+		const match = mqttSettings.broker.match(brokerRegex)
+		if (match) {
+			const [, protocol, ip_domain, port] = match // Деструктуризация
+			setFormData(prevData => ({
+				...prevData,
+				enabled: mqttSettings.enabled,
+				broker: mqttSettings.broker,
+				protocol,
+				ip_domain,
+				port
+			}))
+		}
 	}, [mqttSettings])
 
 	function handleInputChange(e) {
 		const { name, value, type, checked } = e.target
-		setFormData(prevData => ({
-			...prevData,
-			[name]: type === 'checkbox' ? checked : value
-		}))
+		const newValue = type === 'checkbox' ? checked : value
+		setFormData(prevData => {
+			const updatedData = {
+				...prevData,
+				[name]: newValue
+			}
+			if (['protocol', 'ip_domain', 'port'].includes(name)) {
+				updatedData.broker = `${updatedData.protocol}://${updatedData.ip_domain}:${updatedData.port}`
+			}
+			return updatedData
+		})
+		console.log(formData)
 	}
 
 	function filterEmptyFields(data) {
 		return Object.fromEntries(
-			Object.entries(data).filter(entry => entry[1] !== '')
+			Object.entries(data).filter(
+				entry =>
+					entry[1] !== '' &&
+					entry[0] != 'protocol' &&
+					entry[0] != 'ip_domain' &&
+					entry[0] != 'port'
+			)
 		)
 	}
 
 	async function handleFormSubmit(e) {
 		e.preventDefault()
 		try {
-			const filteredData = filterEmptyFields(formData)
-			console.log(JSON.stringify(filteredData))
-
-			const response = await fetch(constants.serverIp + '/api/mqtt/settings', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(filteredData)
-			})
-			if (!response.ok) {
-				throw new Error(`Ошибка: ${response.status} ${response.statusText}`)
+			const ipRegex =
+				/^(mqtt|mqtts):\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):(\d{1,5})$/
+			const domainRegex =
+				/^(mqtt|mqtts):\/\/(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+:(\d{1,5})$/
+			if (ipRegex.test(formData.broker) || domainRegex.test(formData.broker)) {
+				// toast.success(`broker name is okay`)
+				const filteredData = filterEmptyFields(formData)
+				console.log(JSON.stringify(filteredData))
+				const response = await fetch(
+					constants.serverIp + '/api/mqtt/settings',
+					{
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(filteredData)
+					}
+				)
+				if (!response.ok) {
+					throw new Error(`Ошибка: ${response.status} ${response.statusText}`)
+				}
+				const result = await response.json()
+				toast.success(
+					`Настройки успешно сохранены и будут применены после следующей перезагрузки устройства. Device Message: ${JSON.stringify(
+						result
+					)}`
+				)
+				await fetchData('/api/mqtt/settings', setMqttSettings)
+			} else {
+				toast.error(`Broker name is invalid. Can not save settings!`)
 			}
-			const result = await response.json()
-			toast.success(
-				`Настройки успешно сохранены и будут применены после следующей перезагрузки устройства. Device Message: ${JSON.stringify(
-					result
-				)}`
-			)
-			await fetchData('/api/mqtt/settings', setMqttSettings)
 		} catch (error) {
 			console.error('Ошибка при отправке настроек:', error)
 		}
@@ -93,29 +128,75 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 								className='d-flex flex-column flex-grow-1 justify-content-between'
 								onSubmit={handleFormSubmit}
 							>
-								{/* Поля формы */}
-								{['broker', 'username', 'password'].map(field => (
-									<div className='mb-3' key={field}>
+								<div className='d-flex'>
+									<div className='mb-3'>
 										<label className='form-label'>
-											<strong>{field}</strong>
+											<strong>Broker</strong>
 										</label>
-										<input
-											required={field === 'broker' ? true : false}
-											className='form-control'
-											type={field === 'password' ? 'password' : 'text'}
-											name={field}
-											value={formData[field]}
-											placeholder={mqttSettings[field] || ''}
-											onChange={handleInputChange}
-										/>
+										<div className='d-flex align-items-center form-control'>
+											<select
+												className='form-control border-0 w-50'
+												name='protocol'
+												value={formData.protocol}
+												onChange={handleInputChange}
+											>
+												<option value='mqtt'>mqtt ://</option>
+												<option value='mqtts'>mqtts ://</option>
+											</select>
+											<input
+												className='form-control border-0 '
+												type='text'
+												name='ip_domain'
+												value={formData.ip_domain}
+												placeholder={mqttSettings.ip_domain || ''}
+												onChange={handleInputChange}
+											/>
+											<div>:</div>
+											<input
+												className='form-control border-0 w-50'
+												type='number'
+												max={65534}
+												min={1}
+												name='port'
+												value={formData.port}
+												placeholder={mqttSettings.port || ''}
+												onChange={handleInputChange}
+											/>
+										</div>
 									</div>
-								))}
+								</div>
+								<div className='mb-3'>
+									<label className='form-label'>
+										<strong>Username</strong>
+									</label>
+									<input
+										className='form-control'
+										type='text'
+										name='username'
+										value={formData.username}
+										placeholder={mqttSettings.username || ''}
+										onChange={handleInputChange}
+									/>
+								</div>
+								<div className='mb-3'>
+									<label className='form-label'>
+										<strong>Password</strong>
+									</label>
+									<input
+										className='form-control'
+										type='password'
+										name='password'
+										value={formData.password}
+										placeholder={mqttSettings.password || ''}
+										onChange={handleInputChange}
+									/>
+								</div>
 								<div className='form-check mb-3'>
 									<input
 										type='checkbox'
 										className='form-check-input'
 										name='enabled'
-										checked={formData.enabled==true?true:false}
+										checked={formData.enabled == true ? true : false}
 										onChange={handleInputChange}
 									/>
 									<label className='form-check-label'>
