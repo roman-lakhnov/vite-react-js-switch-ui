@@ -23,7 +23,7 @@ function App() {
 		fetchData('/api/mqtt/settings', setMqttSettings)
 		fetchData('/api/device/status', setDeviceStatus)
 	}, [])
-
+// TODO translate to to eng
 	return (
 		<div className='container mt-3 mb-3'>
 			<div className='row'>
