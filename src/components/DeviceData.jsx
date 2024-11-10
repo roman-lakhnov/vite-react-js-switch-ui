@@ -26,7 +26,7 @@ const DeviceData = ({
 	}
 	return (
 		<div className='col-md-8 mt-4 d-flex flex-column'>
-			<h2 className='mb-4'>Данные устройства</h2>
+			<h2 className='mb-4'>Device data</h2>
 			<div className='row h-100'>
 				{ramStatus && <Card title='RAM Status' data={ramStatus} />}
 				{deviceStatus && <Card title='Device Status' data={deviceStatus} />}

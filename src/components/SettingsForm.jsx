@@ -18,7 +18,7 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 		const brokerRegex = /^(mqtt|mqtts):\/\/([\d.]+|\S+):(\d+)$/
 		const match = mqttSettings.broker.match(brokerRegex)
 		if (match) {
-			const [, protocol, ip_domain, port] = match // Деструктуризация
+			const [, protocol, ip_domain, port] = match 
 			setFormData(prevData => ({
 				...prevData,
 				enabled: mqttSettings.enabled,
@@ -116,7 +116,7 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 
 	return (
 		<div className='col-md-4 d-flex flex-column mt-4'>
-			<h2 className='mb-4'>Настройка устройства</h2>
+			<h2 className='mb-4'>Device setup</h2>
 			<div className='row flex-grow-1'>
 				<div className='col-md-12 d-flex'>
 					<div className='card flex-grow-1 '>
@@ -205,14 +205,14 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 								</div>
 								<div className='d-flex flex-column gap-3'>
 									<button type='submit' className='btn btn-outline-dark'>
-										<strong>Сохранить настройки</strong>
+										<strong>Save settings</strong>
 									</button>
 									<button
 										type='button'
 										onClick={handleRestart}
 										className='btn btn-outline-danger'
 									>
-										<strong>Перезагрузить устройство</strong>
+										<strong>Restart device</strong>
 									</button>
 								</div>
 							</form>

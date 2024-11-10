@@ -5,6 +5,7 @@ import Indicators from './components/Indicators'
 import SwitchControl from './components/SwitchControl'
 import fetchData from './utils/fetchData'
 import Header from './components/Header'
+import FileUploader from './components/FileUploader'
 
 function App() {
 	const [ramStatus, setRamStatus] = useState(null)
@@ -23,7 +24,6 @@ function App() {
 		fetchData('/api/mqtt/settings', setMqttSettings)
 		fetchData('/api/device/status', setDeviceStatus)
 	}, [])
-// TODO translate to to eng
 	return (
 		<div className='container mt-3 mb-3'>
 			<div className='row'>
@@ -39,8 +39,8 @@ function App() {
 					mqttSettings={mqttSettings}
 				/>
 				<SwitchControl ioStatus={ioStatus} setIoStatus={setIoStatus} />
-				<Indicators gateStatus={ioStatus.inputs} title={'Входы'} />
-				{/* <Indicators gateStatus={ioStatus.outputs} title={'Выходы'} /> */}
+				<Indicators gateStatus={ioStatus.inputs} title={'Inputs'} />
+				<FileUploader />
 			</div>
 		</div>
 	)
