@@ -1,7 +1,10 @@
 import { useRef, useState } from 'react'
+import { constants } from '../utils/constants'
+import CryptoJS from 'crypto-js'
+import { ToastContainer, toast } from 'react-toastify'
 
 function FileUploader({
-	url = 'http://10.0.20.230/api/firmware/upload',
+	url = `${constants.serverIp}/api/firmware/upload`,
 	destinationFilePath = 'firmware.bin',
 	maxSize = 200000,
 	chunkSize = 1024
@@ -14,17 +17,52 @@ function FileUploader({
 	const [uploadedBits, setUploadedBits] = useState(0)
 	const fileInputRef = useRef(null)
 	const [uploadError, setUploadError] = useState(null)
+	const [localMD5, setLocalMD5] = useState(null)
+	const [serverMD5, setServerMD5] = useState(null)
 
-	const handleFileChange = e => {
+	async function calculateLocalMD5(file) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = () => {
+				const wordArray = CryptoJS.lib.WordArray.create(reader.result)
+				const localMD5 = CryptoJS.MD5(wordArray).toString()
+				resolve(localMD5)
+			}
+			reader.onerror = () => reject('Error calculating local MD5')
+			reader.readAsArrayBuffer(file)
+		})
+	}
+
+	async function getServerMD5() {
+		try {
+			const response = await fetch(`${constants.serverIp}/api/firmware/md5`)
+			const data = await response.json()
+			if (data.status === 'success') {
+				return data.md5
+			} else {
+				throw new Error('Failed to fetch MD5 from server')
+			}
+		} catch (error) {
+			setUploadError(error.message)
+			return null
+		}
+	}
+
+	const handleFileChange = async e => {
 		const file = e.target.files[0]
 		setUploadProgress(0)
 		setUploadedBits(0)
 		setUploadError(null)
+		setLocalMD5(null)
+		setServerMD5(null)
 		if (file) {
 			setFile(file)
 			setFileSize(file.size)
 			if (file.size > maxSize) {
 				setUploadError('File size exceeds maximum allowed size')
+			} else {
+				const localMD5 = await calculateLocalMD5(file)
+				setLocalMD5(localMD5)
 			}
 		}
 	}
@@ -41,6 +79,11 @@ function FileUploader({
 				await uploadChunk(chunk, offset)
 				offset += chunkSize
 				await new Promise(resolve => setTimeout(resolve, 10))
+				if (offset >= fileSize) {
+					const serverMD5 = (await getServerMD5()).trim()
+					setServerMD5(serverMD5)
+					setIsUploading(false)
+				}
 			}
 		}
 		reader.onerror = () => {
@@ -48,7 +91,6 @@ function FileUploader({
 			isCancelledRef.current = true
 		}
 	}
-
 	const uploadChunk = async (chunk, offset) => {
 		const params = new URLSearchParams({
 			file: destinationFilePath,
@@ -84,7 +126,28 @@ function FileUploader({
 		setIsUploading(false)
 		setFile(null)
 		fileInputRef.current.value = null
-		setUploadError('file upload stopped by user')
+		setUploadError('Uploading stopped by user.')
+	}
+
+	// TODO server endpoint rework needed in order to activate firmware and restart device
+	async function handleRestart() {
+		try {
+			const response = await fetch(constants.serverIp + '/api/device/restart', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' }
+			})
+			if (!response.ok) {
+				throw new Error(`Ошибка: ${response.status} ${response.statusText}`)
+			}
+			const result = await response.json()
+			toast.error(
+				`Устройство будет перезагружено. Ожидайте. Device Message: ${JSON.stringify(
+					result
+				)}`
+			)
+		} catch (error) {
+			console.error('Ошибка при перезагрузке:', error)
+		}
 	}
 
 	return (
@@ -105,7 +168,6 @@ function FileUploader({
 								onChange={handleFileChange}
 							/>
 						</div>
-						{uploadError && <p className='text-danger'>Error: {uploadError}</p>}
 						{uploadProgress !== 0 && (
 							<div className=''>
 								<progress value={uploadProgress} max='100' className='w-100'>
@@ -116,21 +178,59 @@ function FileUploader({
 								</p>
 							</div>
 						)}
-						{uploadProgress == 100 && (
+						{uploadError && <p className='text-danger'>Error: {uploadError}</p>}
+						{uploadProgress == 100 && localMD5 && (
 							<div className=''>
-								<p className='text-center m-0'>File uploaded successfully!</p>
+								<p style={{ fontSize: '0.6rem' }} className='text-center m-0'>
+									{localMD5}-localMD5
+								</p>
 							</div>
 						)}
-						{!isUploading && (
-							<button
-								disabled={!file || fileSize > maxSize}
-								type='button'
-								className='btn btn-outline-dark'
-								onClick={uploadFile}
-							>
-								Upload File
-							</button>
+						{uploadProgress == 100 && serverMD5 && (
+							<div className=''>
+								<p style={{ fontSize: '0.6rem' }} className='text-center m-0'>
+									{serverMD5}-serverMD5
+								</p>
+							</div>
 						)}
+						{!isUploading && uploadProgress == 100 && localMD5 == serverMD5 && (
+							<>
+								<div className=''>
+									<p className='text-center fw-bold m-0'>
+										File uploaded successfully!
+									</p>
+								</div>
+								<button
+									type='button'
+									className='btn btn-outline-warning'
+									onClick={handleRestart}
+								>
+									<strong>Apply firmware and Restart device</strong>
+								</button>
+							</>
+						)}
+						{!isUploading && uploadProgress == 100 && localMD5 != serverMD5 && (
+							<div className=''>
+								<p className='text-center fw-bold text-danger m-0'>
+									File damaged! Upload failed!
+								</p>
+							</div>
+						)}
+						{!isUploading &&
+							localMD5 != serverMD5 &&
+							file &&
+							uploadProgress != 100 && (
+								<button
+									disabled={
+										!file || fileSize > maxSize || uploadProgress == 100
+									}
+									type='button'
+									className='btn btn-outline-dark'
+									onClick={uploadFile}
+								>
+									Upload File
+								</button>
+							)}
 						{isUploading && (
 							<button
 								type='button'
@@ -143,6 +243,7 @@ function FileUploader({
 					</form>
 				</div>
 			</div>
+			<ToastContainer />
 		</div>
 	)
 }

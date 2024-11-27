@@ -18,7 +18,7 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 		const brokerRegex = /^(mqtt|mqtts):\/\/([\d.]+|\S+):(\d+)$/
 		const match = mqttSettings.broker.match(brokerRegex)
 		if (match) {
-			const [, protocol, ip_domain, port] = match 
+			const [, protocol, ip_domain, port] = match
 			setFormData(prevData => ({
 				...prevData,
 				enabled: mqttSettings.enabled,
@@ -66,7 +66,6 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 			const domainRegex =
 				/^(mqtt|mqtts):\/\/(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+:(\d{1,5})$/
 			if (ipRegex.test(formData.broker) || domainRegex.test(formData.broker)) {
-				// toast.success(`broker name is okay`)
 				const filteredData = filterEmptyFields(formData)
 				console.log(JSON.stringify(filteredData))
 				const response = await fetch(
