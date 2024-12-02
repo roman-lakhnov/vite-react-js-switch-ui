@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import fetchData from '../utils/fetchData'
 import { constants } from '../utils/constants'
-import { ToastContainer, toast } from 'react-toastify'
+import {toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
@@ -43,7 +43,6 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 			}
 			return updatedData
 		})
-		console.log(formData)
 	}
 
 	function filterEmptyFields(data) {
@@ -67,7 +66,6 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 				/^(mqtt|mqtts):\/\/(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,})+:(\d{1,5})$/
 			if (ipRegex.test(formData.broker) || domainRegex.test(formData.broker)) {
 				const filteredData = filterEmptyFields(formData)
-				console.log(JSON.stringify(filteredData))
 				const response = await fetch(
 					constants.serverIp + '/api/mqtt/settings',
 					{
@@ -215,7 +213,6 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 									</button>
 								</div>
 							</form>
-							<ToastContainer />
 						</div>
 					</div>
 				</div>

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { constants } from '../utils/constants'
 import CryptoJS from 'crypto-js'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 
 function FileUploader({
 	url = `${constants.serverIp}/api/firmware/upload`,
@@ -132,7 +132,7 @@ function FileUploader({
 	// TODO server endpoint rework needed in order to activate firmware and restart device
 	async function handleRestart() {
 		try {
-			const response = await fetch(constants.serverIp + '/api/device/restart', {
+			const response = await fetch(constants.serverIp + '/api/firmware/apply', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' }
 			})
@@ -243,7 +243,6 @@ function FileUploader({
 					</form>
 				</div>
 			</div>
-			<ToastContainer />
 		</div>
 	)
 }

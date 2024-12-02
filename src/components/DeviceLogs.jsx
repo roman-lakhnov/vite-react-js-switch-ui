@@ -1,14 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { constants } from '../utils/constants'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast} from 'react-toastify'
 
 const DeviceLogs = () => {
+	const listRef = useRef(null)
 	const [deviceLogs, setDeviceLogs] = useState(null)
-	let endpoint = '/api/device/log'
+
+	useEffect(() => {
+		// Прокрутить к концу при загрузке компонента или изменении списка
+		if (listRef.current) {
+			listRef.current.scrollTop = listRef.current.scrollHeight
+		}
+	}, [deviceLogs]) // Следим за изменениями в `deviceLogs`
 
 	async function fetchData() {
 		try {
-			const response = await fetch(constants.serverIp + endpoint, {
+			const response = await fetch(constants.serverIp + '/api/device/log', {
 				headers: {
 					'Content-Type': 'text/plain'
 				}
@@ -22,23 +29,47 @@ const DeviceLogs = () => {
 			const logEntries = textData.split(
 				/(?=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/g
 			)
-			setDeviceLogs(logEntries.reverse())
+			setDeviceLogs(logEntries)
 			toast.success('Logs refreshed')
 		} catch (error) {
-			
 			// TODO  eng translation
 			console.error('Ошибка запроса:', error)
 		}
 	}
+
+	async function fetchOldData() {
+		try {
+			const response = await fetch(constants.serverIp + '/api/device/log_old', {
+				headers: {
+					'Content-Type': 'text/plain'
+				}
+			})
+			if (!response.ok) {
+				throw new Error(
+					`Ошибка сети: ${response.status} ${response.statusText}`
+				)
+			}
+			const textData = await response.text()
+			const logEntries = textData.split(
+				/(?=\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})/g
+			)
+			setDeviceLogs(logEntries)
+			toast.success('Logs refreshed')
+		} catch (error) {
+			// TODO  eng translation
+			console.error('Ошибка запроса:', error)
+		}
+	}
+
 	async function downloadLogs() {
 		toast.warn('this feature is under development')
 		//TODO
 	}
 
 	// TODO переделать весь рендеринг
+	// TODO get archived logs button
 	return (
-		<div className='col-md-8 mt-4 d-flex flex-column'>
-			<ToastContainer />
+		<div className='col-md-12 mt-4 d-flex flex-column'>
 			<h2 className='mb-4'>Device Logs</h2>
 			<div className='row h-100'>
 				<div className='col-md-12 '>
@@ -48,7 +79,7 @@ const DeviceLogs = () => {
 						</div>
 						<div className='card-body h-100'>
 							<div className='row m-0 justify-content-between'>
-								<div className='col-6 p-0 pe-2'>
+								<div className='col-4 p-0 pe-2'>
 									<button
 										type='button'
 										onClick={fetchData}
@@ -57,21 +88,31 @@ const DeviceLogs = () => {
 										Get actual logs
 									</button>
 								</div>
-								<div className='col-6 p-0 ps-2'>
+								<div className='col-4 p-0 ps-2 pe-2'>
+									<button
+										type='button'
+										onClick={fetchOldData}
+										className='btn btn-outline-dark w-100'
+									>
+										Get old logs
+									</button>
+								</div>
+								<div className='col-4 p-0 ps-2'>
 									<button
 										type='button'
 										onClick={downloadLogs}
 										className='btn btn-outline-dark w-100'
 									>
-										Download logs file
+										Download logs
 									</button>
 								</div>
 							</div>
 							{deviceLogs ? (
 								<ul
+									ref={listRef}
 									className='mt-4'
 									style={{
-										maxHeight: '100px',
+										maxHeight: '300px',
 										minHeight: '70%',
 										overflowY: 'auto',
 										listStyle: 'none',

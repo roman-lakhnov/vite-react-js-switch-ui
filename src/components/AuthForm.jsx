@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { constants } from '../utils/constants'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-const AuthForm = ({  setAuthUser }) => {
+const AuthForm = ({ setAuthUser }) => {
 	const [formData, setFormData] = useState({
 		username: '',
 		password: ''
@@ -16,31 +16,31 @@ const AuthForm = ({  setAuthUser }) => {
 			[name]: value
 		}))
 	}
-	async function handleSignUp() {
-		toast.info('Sign up feature is under development.')
-	}
+	// async function handleSignUp() {
+	// 	toast.info('Sign up feature is under development.')
+	// }
 
 	async function handleLogIn() {
 		if (!formData.username || !formData.password) {
 			toast.error('Please fill in both username and password.')
 			return
 		}
-		const credentials = btoa(`${formData.username}:${formData.password}`) 
+		const credentials = btoa(`${formData.username}:${formData.password}`)
 		try {
 			const response = await fetch(`${constants.serverIp}/api/login`, {
 				method: 'POST',
 				headers: {
-					Authorization: `Basic ${credentials}`, 
+					Authorization: `Basic ${credentials}`,
 					'Content-Type': 'application/json'
 				},
-				credentials: 'include' 
+				credentials: 'include'
 			})
 			if (!response.ok) {
 				throw new Error(
 					`Login failed: ${response.status} ${response.statusText}`
 				)
 			}
-			const result = await response.json() 
+			const result = await response.json()
 			setAuthUser(result.user)
 		} catch (error) {
 			console.error('Error during login:', error)
@@ -90,16 +90,15 @@ const AuthForm = ({  setAuthUser }) => {
 							>
 								<strong>Log in</strong>
 							</button>
-							<button
+							{/* <button
 								type='button'
 								onClick={handleSignUp}
 								className='btn btn-outline-primary'
 							>
 								<strong>Sign up</strong>
-							</button>
+							</button> */}
 						</div>
 					</form>
-					<ToastContainer />
 				</div>
 			</div>
 		</div>

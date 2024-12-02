@@ -10,8 +10,11 @@ import DeviceLogs from './components/DeviceLogs'
 import AuthForm from './components/AuthForm'
 import Footer from './components/Footer'
 import { constants } from './utils/constants'
+import UserData from './components/UserData'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
+	const [usersData, setUsersData] = useState(null)
 	const [ramStatus, setRamStatus] = useState(null)
 	const [deviceStatus, setDeviceStatus] = useState(null)
 	const [ioStatus, setIoStatus] = useState({ inputs: [], outputs: [] })
@@ -22,6 +25,7 @@ function App() {
 		enabled: false
 	})
 	const [authUser, setAuthUser] = useState(null)
+	const [refresh, setRefresh] = useState(0)
 
 	useEffect(() => {
 		async function accessTokenCheck() {
@@ -46,42 +50,48 @@ function App() {
 	}, [])
 
 	useEffect(() => {
+		//TODO пофиксить многократные вызовы
 		if (authUser) {
 			fetchData('/api/ram/status', setRamStatus)
 			fetchData('/api/io/status', setIoStatus)
 			fetchData('/api/mqtt/settings', setMqttSettings)
 			fetchData('/api/device/status', setDeviceStatus)
+			fetchData('/api/device/user', setUsersData)
 		}
-	}, [authUser])
+	}, [authUser, refresh])
 	// TODO запрашивать логи. виводить логи. давать скачать логи.
 	return (
-		<div className='container d-flex flex-column vh-100 pt-3'>
-			<Header setAuthUser={setAuthUser} authUser={authUser} />
-			{!authUser && (
-				<div className='d-flex justify-content-center align-items-center flex-grow-1'>
-					<AuthForm authUser={authUser} setAuthUser={setAuthUser} />
-				</div>
-			)}
-			{authUser && (
-				<div className='row'>
-					<SettingsForm
-						mqttSettings={mqttSettings}
-						setMqttSettings={setMqttSettings}
-					/>
-					<DeviceData
-						ramStatus={ramStatus}
-						deviceStatus={deviceStatus}
-						ioStatus={ioStatus}
-						mqttSettings={mqttSettings}
-					/>
-					<SwitchControl ioStatus={ioStatus} setIoStatus={setIoStatus} />
-					<Indicators gateStatus={ioStatus.inputs} title={'Inputs'} />
-					<FileUploader />
-					<DeviceLogs />
-				</div>
-			)}
-			<Footer />
-		</div>
+		<>
+			<div className='container d-flex flex-column vh-100 pt-3'>
+				<Header setAuthUser={setAuthUser} authUser={authUser} />
+				{!authUser && (
+					<div className='d-flex justify-content-center align-items-center flex-grow-1'>
+						<AuthForm authUser={authUser} setAuthUser={setAuthUser} />
+					</div>
+				)}
+				{authUser && (
+					<div className='row'>
+						<SwitchControl ioStatus={ioStatus} setIoStatus={setIoStatus} />
+						<Indicators gateStatus={ioStatus.inputs} title={'Inputs'} />
+						<SettingsForm
+							mqttSettings={mqttSettings}
+							setMqttSettings={setMqttSettings}
+						/>
+						<DeviceData
+							ramStatus={ramStatus}
+							deviceStatus={deviceStatus}
+							ioStatus={ioStatus}
+							mqttSettings={mqttSettings}
+						/>
+						<FileUploader />
+						<UserData usersData={usersData} setRefresh={setRefresh} />
+						<DeviceLogs />
+					</div>
+				)}
+				<Footer />
+			</div>
+			<ToastContainer />
+		</>
 	)
 }
 
