@@ -17,25 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Установить Git (если нужно)
-      - name: Install Git
-        run: sudo apt update && sudo apt install -y git
-
-      # 3. Установить Node.js и npm
+      # 2. Установить Node.js и npm
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Укажите нужную версию Node.js
+          node-version: 'lts' # Последняя LTS-версия Node.js
 
-      # 4. Установить зависимости
+      # 3. Установить зависимости
       - name: Install dependencies
         run: npm install
 
-      # 5. Собрать проект
+      # 4. Собрать проект
       - name: Build the project
         run: npm run build
 
-      # 6. (Необязательно) Сохранить артефакты сборки
+      # 5. (Необязательно) Сохранить артефакты сборки
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
