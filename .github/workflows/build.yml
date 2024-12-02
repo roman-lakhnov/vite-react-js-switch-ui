@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 'lts' # Последняя LTS-версия Node.js
+          node-version: 'current' # Последняя LTS-версия Node.js
 
       # 3. Установить зависимости
       - name: Install dependencies
