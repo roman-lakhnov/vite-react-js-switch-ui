@@ -33,7 +33,7 @@ jobs:
 
       # 5. (Необязательно) Сохранить артефакты сборки
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-output
           path: ./dist # Путь к папке с собранным проектом
