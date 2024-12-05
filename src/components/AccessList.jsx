@@ -312,40 +312,6 @@ const AccessList = () => {
 								<p className='m-0 mt-2'>No rules yet...</p>
 							)}
 
-							<div className='row m-0 justify-content-between mt-2'>
-								<div className='col-6 p-0 pe-2'>
-									{!isEditing && (
-										<button
-											type='button'
-											onClick={handleEdit}
-											className='btn btn-outline-dark w-100'
-										>
-											Edit list
-										</button>
-									)}
-									{isEditing && (
-										<button
-											type='button'
-											onClick={handleSave}
-											className='btn btn-outline-success w-100'
-										>
-											Save Changes
-										</button>
-									)}
-								</div>
-								{isEditing && (
-									<div className='col-6 p-0 pe-2'>
-										<button
-											disabled={!isEditing}
-											type='button'
-											onClick={handleCancel}
-											className='btn btn-outline-danger w-100'
-										>
-											Cancel Changes
-										</button>
-									</div>
-								)}
-							</div>
 							{isEditing && (
 								<form
 									className='row m-0 justify-content-between mt-2'
@@ -397,6 +363,40 @@ const AccessList = () => {
 									</div>
 								</form>
 							)}
+							<div className='row m-0 justify-content-between mt-2'>
+								<div className='col-6 p-0 pe-2'>
+									{!isEditing && (
+										<button
+											type='button'
+											onClick={handleEdit}
+											className='btn btn-outline-dark w-100'
+										>
+											Edit list
+										</button>
+									)}
+									{isEditing && (
+										<button
+											type='button'
+											onClick={handleSave}
+											className='btn btn-outline-success w-100'
+										>
+											Save Changes
+										</button>
+									)}
+								</div>
+								{isEditing && (
+									<div className='col-6 p-0 pe-2'>
+										<button
+											disabled={!isEditing}
+											type='button'
+											onClick={handleCancel}
+											className='btn btn-outline-danger w-100'
+										>
+											Cancel Changes
+										</button>
+									</div>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
