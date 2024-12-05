@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { constants } from '../utils/constants'
-import { toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 
 const DeviceLogs = () => {
 	const listRef = useRef(null)
@@ -33,7 +33,7 @@ const DeviceLogs = () => {
 			toast.success('Logs refreshed')
 		} catch (error) {
 			// TODO  eng translation
-			console.error('Ошибка запроса:', error)
+			toast.error(`Ошибка запроса:${error}`)
 		}
 	}
 
@@ -57,13 +57,13 @@ const DeviceLogs = () => {
 			toast.success('Logs refreshed')
 		} catch (error) {
 			// TODO  eng translation
-			console.error('Ошибка запроса:', error)
+			toast.error(`Ошибка запроса:${error}`)
 		}
 	}
 
 	async function downloadLogs() {
 		toast.warn('this feature is under development')
-		//TODO
+		// TODO давать скачать логи.
 	}
 
 	// TODO переделать весь рендеринг

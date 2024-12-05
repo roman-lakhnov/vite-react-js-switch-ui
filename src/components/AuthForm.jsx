@@ -25,13 +25,16 @@ const AuthForm = ({ setAuthUser }) => {
 			toast.error('Please fill in both username and password.')
 			return
 		}
-		const credentials = btoa(`${formData.username}:${formData.password}`)
+		const toBase64UTF8 = str =>
+			btoa(String.fromCharCode(...new TextEncoder().encode(str)))
+		const credentials = toBase64UTF8(
+			`${formData.username}:${formData.password}`
+		)
 		try {
 			const response = await fetch(`${constants.serverIp}/api/login`, {
 				method: 'POST',
 				headers: {
-					Authorization: `Basic ${credentials}`,
-					'Content-Type': 'application/json'
+					Authorization: `Basic ${credentials}`
 				},
 				credentials: 'include'
 			})

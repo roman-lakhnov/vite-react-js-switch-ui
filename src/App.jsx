@@ -12,6 +12,7 @@ import Footer from './components/Footer'
 import { constants } from './utils/constants'
 import UserData from './components/UserData'
 import { ToastContainer } from 'react-toastify'
+import AccessList from './components/AccessList'
 
 function App() {
 	const [usersData, setUsersData] = useState(null)
@@ -50,7 +51,6 @@ function App() {
 	}, [])
 
 	useEffect(() => {
-		//TODO пофиксить многократные вызовы
 		if (authUser) {
 			fetchData('/api/ram/status', setRamStatus)
 			fetchData('/api/io/status', setIoStatus)
@@ -59,7 +59,9 @@ function App() {
 			fetchData('/api/device/user', setUsersData)
 		}
 	}, [authUser, refresh])
-	// TODO запрашивать логи. виводить логи. давать скачать логи.
+
+
+	//TODO GET /api/device/version
 	return (
 		<>
 			<div className='container d-flex flex-column vh-100 pt-3'>
@@ -86,6 +88,7 @@ function App() {
 						<FileUploader />
 						<UserData usersData={usersData} setRefresh={setRefresh} />
 						<DeviceLogs />
+						<AccessList />
 					</div>
 				)}
 				<Footer />
