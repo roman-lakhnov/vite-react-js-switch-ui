@@ -2,7 +2,7 @@ import fetchData from '../utils/fetchData'
 import { constants } from '../utils/constants'
 const SwitchControl = ({ ioStatus, setIoStatus }) => {
 	const Switch = ({ relayId, isActive }) => (
-		<div className='form-check form-switch me-3'>
+		<div className='m-0 p-0 form-check form-switch'>
 			<input
 				className='form-check-input'
 				type='checkbox'
@@ -33,8 +33,8 @@ const SwitchControl = ({ ioStatus, setIoStatus }) => {
 	}
 	return (
 		<div className='mt-4 col-md-6 col-sm-12'>
-			<div className='d-flex justify-content-between border rounded bg-light'>
-				<h2 className='m-2 align-content-center'>Relay</h2>
+			<div className='d-flex justify-content-between border rounded bg-light px-2'>
+				<h2 className='m-0 pb-1 align-content-center'>Relay</h2>
 				{ioStatus.outputs.map((state, index) => (
 					<div key={index} className='align-content-center'>
 						<Switch relayId={index + 1} isActive={state} />

@@ -126,11 +126,11 @@ const SettingsForm = ({ mqttSettings, setMqttSettings }) => {
 								onSubmit={handleFormSubmit}
 							>
 								<div className='d-flex'>
-									<div className='mb-3'>
+									<div className='mb-3 flex-grow-1'>
 										<label className='form-label'>
 											<strong>Broker</strong>
 										</label>
-										<div className='d-flex align-items-center form-control'>
+										<div className='d-flex align-items-center form-control p-0'>
 											<select
 												className='form-control border-0 w-50'
 												name='protocol'

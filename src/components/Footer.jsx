@@ -1,17 +1,37 @@
 const Footer = () => {
 	return (
-		<div className='d-flex justify-content-center gap-3 align-content-center align-items-center mt-3 pb-3'>
-			<div className='align-items-center d-flex gap-2 border rounded border-1 bg-light ps-3 pe-3 h-100'>
-				<p className='m-0 '>Developed by Roman Lakhnov</p>
-				<p className='m-0 '>
-					Contacts-
-					<a
-						className='text-black'
-						href='https://github.com/roman-lakhnov/vite-react-js-switch-ui'
-					>
-						github.com
-					</a>
-				</p>
+		<div className='col-md-12 mt-4 d-flex flex-column pb-3'>
+			<div className='row'>
+				<div className='col-md-6 mt-2'>
+					<div className='card'>
+						<div className='card-body p-1 d-flex justify-content-evenly bg-light'>
+							<p className='m-0 '>UI developed by Roman Lakhnov</p>
+							<p className='m-0 ps-2'>
+								<a
+									className='text-black'
+									href='https://github.com/roman-lakhnov/vite-react-js-switch-ui'
+								>
+									github.com
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
+				<div className='col-md-6 mt-2'>
+					<div className='card'>
+						<div className='card-body p-1 d-flex justify-content-evenly bg-light'>
+							<p className='m-0 '>Backend developed by kshypachov</p>
+							<p className='m-0 ps-2'>
+								<a
+									className='text-black'
+									href='https://github.com/kshypachov/f411_io_mod'
+								>
+									github.com
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	)

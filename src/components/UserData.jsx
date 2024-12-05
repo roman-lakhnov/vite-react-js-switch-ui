@@ -124,7 +124,7 @@ const UserData = ({ usersData, setRefresh }) => {
 
 	const Card = ({ title, data }) => {
 		return (
-			<div className='col-md-6'>
+			<div className='col-md-6 mt-3'>
 				<div className='card h-100'>
 					<div className='card-header'>
 						<h5 className='card-title'>{title}</h5>
@@ -171,11 +171,11 @@ const UserData = ({ usersData, setRefresh }) => {
 
 	return (
 		<div className='col-md-8 mt-4 d-flex flex-column'>
-			<h2 className='mb-4'>User Management</h2>
+			<h2>User Management</h2>
 			<div className='row h-100'>
 				{usersData && <Card title='User List' data={usersData.users} />}
 
-				<div className='col-md-6'>
+				<div className='col-md-6 mt-3'>
 					<div className='card h-100'>
 						{!isEditing && (
 							<div className='card-header'>
