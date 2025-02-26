@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { constants } from '../utils/constants'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -11,6 +11,7 @@ const AuthForm = ({ setAuthUser }) => {
 
 	function handleInputChange(event) {
 		const { name, value } = event.target
+		console.log({ ...formData, [name]: value })
 		setFormData(prevState => ({
 			...prevState,
 			[name]: value
@@ -20,8 +21,25 @@ const AuthForm = ({ setAuthUser }) => {
 	// 	toast.info('Sign up feature is under development.')
 	// }
 
+	useEffect(() => {
+		const formElement = document.querySelector('form')
+		const handleKeyDown = event => {
+			if (event.key === 'Enter') {
+				handleLogIn()
+			}
+		}
+		formElement.addEventListener('keydown', handleKeyDown)
+
+		return () => {
+			formElement.removeEventListener('keydown', handleKeyDown)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [formData])
+
 	async function handleLogIn() {
 		if (!formData.username || !formData.password) {
+			console.log('formData', formData)
+
 			toast.error('Please fill in both username and password.')
 			return
 		}
@@ -45,6 +63,8 @@ const AuthForm = ({ setAuthUser }) => {
 			}
 			const result = await response.json()
 			setAuthUser(result.user)
+			toast.clearWaitingQueue()
+			toast.dismiss()
 		} catch (error) {
 			console.error('Error during login:', error)
 			toast.error('Login failed. Please try again.')
@@ -93,13 +113,6 @@ const AuthForm = ({ setAuthUser }) => {
 							>
 								<strong>Log in</strong>
 							</button>
-							{/* <button
-								type='button'
-								onClick={handleSignUp}
-								className='btn btn-outline-primary'
-							>
-								<strong>Sign up</strong>
-							</button> */}
 						</div>
 					</form>
 				</div>
