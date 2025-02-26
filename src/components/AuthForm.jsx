@@ -11,7 +11,6 @@ const AuthForm = ({ setAuthUser }) => {
 
 	function handleInputChange(event) {
 		const { name, value } = event.target
-		console.log({ ...formData, [name]: value })
 		setFormData(prevState => ({
 			...prevState,
 			[name]: value
@@ -38,8 +37,6 @@ const AuthForm = ({ setAuthUser }) => {
 
 	async function handleLogIn() {
 		if (!formData.username || !formData.password) {
-			console.log('formData', formData)
-
 			toast.error('Please fill in both username and password.')
 			return
 		}
